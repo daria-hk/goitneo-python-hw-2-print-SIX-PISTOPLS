@@ -1,13 +1,31 @@
+# error handling
+def input_error(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ValueError:
+            return "Give me name and phone please."
+        except KeyError:
+            return "Contact not found. Try again."
+        except IndexError:
+            return "Enter user name."
+        except: 
+            return "Try again." 
+
+    return inner
+
 def parse_input(user_input):
     cmd, *args = user_input.split()
     cmd = cmd.strip().lower()
     return cmd, *args
 
+@input_error
 def add_contact(args, contacts):
     name, phone = args
     contacts[name] = phone
     return "Contact added."
 
+@input_error
 def update_contact(args, contacts):
     name, phone = args
     if name in contacts:
@@ -15,7 +33,8 @@ def update_contact(args, contacts):
         return "Contact updated."
     else:
         return "Contact not found. Try again."
-   
+
+@input_error   
 def get_phone(args, contacts):
     name = args[0]
     if name in contacts:
@@ -28,7 +47,6 @@ def get_all(contacts):
     for name, phone in contacts.items():
         result += f"Name: {name}, Tel.: {phone}\n"
     return result.strip()
-
 
 def main():
     contacts = {}
@@ -50,6 +68,8 @@ def main():
             print(get_phone(args, contacts))
         elif command == "all":
             print(get_all(contacts))
+        elif command == "break":
+            break
         else:
             print("Invalid command.")
 
